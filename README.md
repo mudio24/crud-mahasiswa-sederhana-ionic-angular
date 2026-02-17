@@ -15,7 +15,6 @@ Aplikasi **CRUD (Create, Read, Update, Delete)** data mahasiswa berbasis web men
 - [Instalasi & Menjalankan](#-instalasi--menjalankan)
 - [Struktur Proyek](#-struktur-proyek)
 - [API Endpoints](#-api-endpoints)
-- [Screenshot](#-screenshot)
 
 ---
 
