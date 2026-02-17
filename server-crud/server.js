@@ -12,7 +12,7 @@ const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '', // Kosongkan jika tidak ada password
-  database: 'db_kampus'
+  database: 'db_mahasiswa'
 });
 
 db.connect((err) => {
@@ -38,11 +38,11 @@ app.get('/api/mahasiswa', (req, res) => {
 // 2️⃣ CREATE - Tambah mahasiswa baru (DENGAN VALIDASI NIM)
 app.post('/api/mahasiswa', (req, res) => {
   const { nim, nama, jurusan, jenis_kelamin } = req.body;
-  
+
   // Validasi input
   if (!nim || !nama || !jurusan || !jenis_kelamin) {
-    return res.status(400).json({ 
-      error: 'Semua field harus diisi!' 
+    return res.status(400).json({
+      error: 'Semua field harus diisi!'
     });
   }
 
@@ -51,11 +51,11 @@ app.post('/api/mahasiswa', (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    
+
     if (results.length > 0) {
       // NIM sudah terdaftar
-      return res.status(409).json({ 
-        error: `NIM ${nim} sudah terdaftar! Gunakan NIM lain.` 
+      return res.status(409).json({
+        error: `NIM ${nim} sudah terdaftar! Gunakan NIM lain.`
       });
     }
 
@@ -65,9 +65,9 @@ app.post('/api/mahasiswa', (req, res) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
-      res.json({ 
-        message: 'Data berhasil ditambahkan!', 
-        id: result.insertId 
+      res.json({
+        message: 'Data berhasil ditambahkan!',
+        id: result.insertId
       });
     });
   });
@@ -80,8 +80,8 @@ app.put('/api/mahasiswa/:id', (req, res) => {
 
   // Validasi input
   if (!nim || !nama || !jurusan || !jenis_kelamin) {
-    return res.status(400).json({ 
-      error: 'Semua field harus diisi!' 
+    return res.status(400).json({
+      error: 'Semua field harus diisi!'
     });
   }
 
@@ -90,10 +90,10 @@ app.put('/api/mahasiswa/:id', (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    
+
     if (results.length > 0) {
-      return res.status(409).json({ 
-        error: `NIM ${nim} sudah digunakan mahasiswa lain!` 
+      return res.status(409).json({
+        error: `NIM ${nim} sudah digunakan mahasiswa lain!`
       });
     }
 
@@ -111,7 +111,7 @@ app.put('/api/mahasiswa/:id', (req, res) => {
 // 4️⃣ DELETE - Hapus data mahasiswa
 app.delete('/api/mahasiswa/:id', (req, res) => {
   const id = req.params.id;
-  
+
   db.query('DELETE FROM mahasiswa WHERE id=?', [id], (err) => {
     if (err) {
       return res.status(500).json({ error: err.message });

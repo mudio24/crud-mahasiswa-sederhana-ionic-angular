@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,14 +7,16 @@ import { AlertController, ToastController, IonicModule } from '@ionic/angular';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
+  styleUrls: ['home.page.scss'],
   standalone: true,
+  encapsulation: ViewEncapsulation.None,
   imports: [IonicModule, CommonModule, FormsModule]
 })
 export class HomePage implements OnInit {
   listMahasiswa: any[] = [];
   listMahasiswaFiltered: any[] = []; // 🆕 Untuk hasil filter
   searchTerm: string = ''; // 🆕 Keyword pencarian
-  
+
   // Variabel untuk form
   inputNim = '';
   inputNama = '';
@@ -26,7 +28,7 @@ export class HomePage implements OnInit {
     private api: ApiService,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadData();
@@ -49,9 +51,9 @@ export class HomePage implements OnInit {
       return;
     }
 
-    const data = { 
+    const data = {
       nim: this.inputNim,
-      nama: this.inputNama, 
+      nama: this.inputNama,
       jurusan: this.inputProdi,
       jenis_kelamin: this.inputGender
     };
@@ -90,7 +92,7 @@ export class HomePage implements OnInit {
     this.inputNama = mhs.nama;
     this.inputProdi = mhs.jurusan;
     this.inputGender = mhs.jenis_kelamin;
-    
+
     // Scroll ke atas agar form terlihat
     window.scrollTo(0, 0);
   }
@@ -110,9 +112,9 @@ export class HomePage implements OnInit {
       header: 'Konfirmasi',
       message: 'Yakin ingin menghapus data ini?',
       buttons: [
-        { 
-          text: 'Batal', 
-          role: 'cancel' 
+        {
+          text: 'Batal',
+          role: 'cancel'
         },
         {
           text: 'Hapus',
@@ -140,7 +142,12 @@ export class HomePage implements OnInit {
     await toast.present();
   }
 
-  // 🆕 METHOD UNTUK LIVE SEARCH
+  // Hitung jumlah mahasiswa berdasarkan gender (untuk statistik)
+  countGender(gender: string): number {
+    return this.listMahasiswa.filter(m => m.jenis_kelamin === gender).length;
+  }
+
+  // METHOD UNTUK LIVE SEARCH
   filterMahasiswa(event: any) {
     const keyword = event.target.value.toLowerCase();
     this.searchTerm = keyword;
@@ -163,18 +170,18 @@ export class HomePage implements OnInit {
   // 🆕 METHOD UNTUK PULL TO REFRESH
   handleRefresh(event: any) {
     console.log('Refreshing data...');
-    
+
     this.api.getMahasiswa().subscribe({
       next: (res) => {
         this.listMahasiswa = res;
         this.listMahasiswaFiltered = res;
-        
+
         // Reset search
         this.searchTerm = '';
-        
+
         // Tampilkan toast
         this.tampilkanToast('Data berhasil di-refresh!', 'success');
-        
+
         // Selesaikan animasi refresh
         event.target.complete();
       },
