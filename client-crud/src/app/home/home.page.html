@@ -1,0 +1,156 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Sistem CRUD Mahasiswa</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  
+  <!-- Komponen Pull To Refresh untuk memuat ulang data -->
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="chevron-down-circle-outline"
+      pullingText="Tarik untuk refresh"
+      refreshingSpinner="circles"
+      refreshingText="Memuat data...">
+    </ion-refresher-content>
+  </ion-refresher>
+  
+  <!-- Form Input Data Mahasiswa -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        {{ idEdit ? 'Edit Data Mahasiswa' : 'Tambah Data Mahasiswa' }}
+      </ion-card-title>
+    </ion-card-header>
+    
+    <ion-card-content>
+      
+      <!-- Input NIM -->
+      <ion-input 
+        label="NIM" 
+        labelPlacement="floating" 
+        fill="outline" 
+        type="text"
+        placeholder="Contoh: 2101001"
+        [(ngModel)]="inputNim">
+      </ion-input>
+      <br>
+      
+      <!-- Input Nama Lengkap -->
+      <ion-input 
+        label="Nama Lengkap" 
+        labelPlacement="floating" 
+        fill="outline" 
+        placeholder="Contoh: Ahmad Fauzi"
+        [(ngModel)]="inputNama">
+      </ion-input>
+      <br>
+      
+      <!-- Pilihan Program Studi -->
+      <ion-select 
+        label="Program Studi" 
+        labelPlacement="floating" 
+        fill="outline" 
+        placeholder="Pilih Program Studi"
+        [(ngModel)]="inputProdi">
+        <ion-select-option value="Teknik Informatika">Teknik Informatika</ion-select-option>
+        <ion-select-option value="Sistem Informasi">Sistem Informasi</ion-select-option>
+        <ion-select-option value="Design Komunikasi Visual">Design Komunikasi Visual</ion-select-option>
+        <ion-select-option value="Akuntansi">Akuntansi</ion-select-option>
+        <ion-select-option value="Ekonomi Syariah">Ekonomi Syariah</ion-select-option>
+      </ion-select>
+      <br>
+      
+      <!-- Pilihan Jenis Kelamin -->
+      <ion-list>
+        <ion-radio-group [(ngModel)]="inputGender">
+          <ion-list-header>
+            <ion-label>Jenis Kelamin</ion-label>
+          </ion-list-header>
+          
+          <ion-item>
+            <ion-radio value="L" labelPlacement="end">Laki-laki</ion-radio>
+          </ion-item>
+          
+          <ion-item>
+            <ion-radio value="P" labelPlacement="end">Perempuan</ion-radio>
+          </ion-item>
+        </ion-radio-group>
+      </ion-list>
+      <br>
+      
+      <!-- Tombol Simpan atau Update Data -->
+      <ion-button expand="block" color="success" (click)="simpanData()">
+        {{ idEdit ? 'Update Data' : 'Simpan Data' }}
+      </ion-button>
+      
+      <!-- Tombol Batal Edit (ditampilkan saat mode edit) -->
+      <ion-button 
+        *ngIf="idEdit" 
+        expand="block" 
+        color="medium" 
+        fill="outline" 
+        (click)="resetForm()">
+        Batal Edit
+      </ion-button>
+      
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Fitur Pencarian Data Mahasiswa -->
+  <ion-searchbar
+    [(ngModel)]="searchTerm"
+    (ionInput)="filterMahasiswa($event)"
+    placeholder="Cari nama, NIM, atau prodi..."
+    animated="true"
+    showCancelButton="focus">
+  </ion-searchbar>
+
+  <!-- Daftar Data Mahasiswa dengan Fitur Swipe -->
+  <h3>Daftar Mahasiswa</h3>
+  <p style="color: #666; font-size: 14px; margin-top: -10px;">
+    Geser item ke kiri untuk menampilkan tombol aksi
+  </p>
+  
+  <ion-list>
+    <!-- Wrapper untuk fitur swipe -->
+    <ion-item-sliding *ngFor="let mhs of listMahasiswaFiltered">
+      
+      <!-- Informasi utama mahasiswa -->
+      <ion-item>
+        <ion-label>
+          <h2><strong>{{ mhs.nama }}</strong></h2>
+          <p><strong>NIM:</strong> {{ mhs.nim }}</p>
+          <p><strong>Prodi:</strong> {{ mhs.jurusan }}</p>
+          <p><strong>Gender:</strong> {{ mhs.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
+        </ion-label>
+      </ion-item>
+
+      <!-- Opsi aksi (muncul saat swipe ke kiri) -->
+      <ion-item-options side="end">
+        
+        <!-- Aksi Edit -->
+        <ion-item-option color="primary" (click)="editData(mhs)">
+          Edit
+        </ion-item-option>
+        
+        <!-- Aksi Hapus -->
+        <ion-item-option color="danger" (click)="konfirmasiHapus(mhs.id)">
+          Hapus
+        </ion-item-option>
+        
+      </ion-item-options>
+
+    </ion-item-sliding>
+  </ion-list>
+
+  <!-- Pesan ketika data tidak ditemukan -->
+  <ion-card *ngIf="listMahasiswaFiltered.length === 0">
+    <ion-card-content style="text-align: center; padding: 40px;">
+      <h3 style="color: #999;">Data tidak ditemukan</h3>
+      <p style="color: #ccc;">Silakan gunakan kata kunci lain</p>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
